@@ -43,14 +43,25 @@ const authenticateToken = (req, res, next) => {
             return res.status(403).json({ message: 'Unauthorized: Invalid token' });
         }
 
-        console.log("not err");
-        
         req.user = user;
-        // return res.status(200).json({});
+        
         console.log("req user:" + JSON.stringify(req.user));
 
-        next();        
+        if(!req.stopRequest){
+            console.log("Allowing this request");
+            next();      
+        }
+        else{ 
+            return res.status(200).json({authenticated:true});
+        }
     });
 };
 
-export { login, authenticateToken }; 
+const setAuthStopRequest = (req, res, next) => {
+    req.stopRequest = true;
+    console.log("set stopRequest");
+    
+    next();
+}
+
+export { login, authenticateToken , setAuthStopRequest}; 

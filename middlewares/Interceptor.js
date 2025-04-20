@@ -1,4 +1,4 @@
-const initInterceptor = (req, res, next) => {
+const interceptor = (req, res, next) => {
     // Log the request method and URL
     console.log("initInterceptor start");
     
@@ -22,14 +22,25 @@ const initInterceptor = (req, res, next) => {
     });
 
     console.log("initInterceptor end, calling next");
-    if (next.name) {
-        console.log(`Next middleware or route handler: ${next.name}`);
-    } else {
-        console.log("Next middleware or route handler is anonymous or unnamed.");
-    }
-    
+
+    // for intercepting reponse
+    // Store the original res.send method
+    const originalSend = res.send;
+
+    // Override res.send
+    res.send = function (body) {
+        console.log("Response Interceptor start (send override start)");
+        console.log("Response Status:", res.statusCode);
+        console.log("Response Headers:", JSON.stringify(res.getHeaders()));
+        console.log("Response Body:", body);
+        console.log("Response Interceptor end (send override end) ... calling send");
+            
+        // Call the original res.send with the body
+        return originalSend.call(this, body);
+    };
+
     // Proceed to the next middleware or route handler
     next();
 };
 
-export default initInterceptor;
+export default interceptor;
