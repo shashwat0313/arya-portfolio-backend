@@ -15,9 +15,12 @@ const PORT = process.env.PORT;
 // json parsing for json body
 app.use(express.json());
 
-// Enable CORS for localhost:5173
+// Enable CORS for localhost:5173 and GitHub Pages URL
 app.use(cors({
-    origin: "http://localhost:5173"
+    origin: [
+        "http://localhost:5173",
+        "https://aryashrestha105.github.io"
+    ]
 }));
 
 // interceptor
