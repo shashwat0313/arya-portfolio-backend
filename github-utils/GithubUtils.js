@@ -11,6 +11,7 @@ const owner = "aryashrestha105"; // Replace with the repository owner (e.g., "oc
 const repo = "arya-portfolio";   // Replace with the repository name (e.g., "Hello-World")
 const branch = "main";      // Replace with the branch name (e.g., "main")
 
+let currentBranch = null;
 
 async function listFilesInRepo() {
     try {
@@ -44,4 +45,26 @@ async function listFilesInRepo() {
     }
 }
 
-export {listFilesInRepo};
+async function getFileContentUtil(filePath, reqBranch) {
+    console.log("reqbranch:" + reqBranch);
+    
+    try {
+        // Get the file content from the repository
+        const fileData = await octokit.rest.repos.getContent({
+            owner,
+            repo,
+            path: filePath,
+            ref: reqBranch, // Specify the branch or commit SHA
+        });
+
+        // Decode the content from Base64
+        const content = Buffer.from(fileData.data.content, 'base64').toString('utf-8');
+        console.log(`Content of ${filePath}:`, content);
+        return content;
+    } catch (error) {
+        console.error(`Error fetching content for file ${filePath}:`, error);
+        throw error;
+    }
+}
+
+export { listFilesInRepo, getFileContentUtil };
