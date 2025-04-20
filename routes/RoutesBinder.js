@@ -6,7 +6,7 @@ const routesBinder = (app) => {
     app.use("/auth", authRouter);
 
     // protected routes
-    app.use("/github-api", authenticateToken, githubRouter)
+    app.use("/github-api", authenticateToken, githubRouter);
 }
 
 export default routesBinder;
