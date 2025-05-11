@@ -1,4 +1,4 @@
-import { listFilesInRepo , getFileContentUtil} from "../github-utils/GithubUtils.js";
+import { listFilesInRepo, getFileContentUtil, createBranchInRepo, deleteBranchFromRepo, processFileCommit } from "../services/GithubService.js";
 
 const getFiles = async (req, res)=>{
     const filesList = await listFilesInRepo();
@@ -16,4 +16,39 @@ const getFileContent = async (req, res) => {
     return res.status(200).json({content});
 }
 
-export {getFiles, getFileContent}
+const createBranch = async (req, res) => {
+    const branchName = req.body.branchName;
+    const result = await createBranchInRepo(branchName);
+
+    return res.status(201).json(result);
+}
+
+const deleteBranch = async (req, res) => {
+    const branchName = decodeURIComponent(req.query.branchName); // Extract branch name from query params
+
+    try {
+        const result = await deleteBranchFromRepo(branchName); // Pass branch name to the service
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error("Error in deleteBranchController:", error.message);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+const commitCreateOrUpdateFile = async (req, res) => {
+    try {
+        const { filePath, content, commitMessage } = req.body;
+
+        if (!filePath || !content || !commitMessage) {
+            return res.status(400).json({ error: "filePath, content, and commitMessage are required." });
+        }
+
+        const result = await processFileCommit({ filePath, content, commitMessage });
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error("Error in commitCreateOrUpdateFile controller:", error.message);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+export { getFiles, getFileContent, createBranch, deleteBranch, commitCreateOrUpdateFile };

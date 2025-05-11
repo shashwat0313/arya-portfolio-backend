@@ -1,6 +1,5 @@
 import express from "express";
 import dotenv from "dotenv"
-// import authRouter from "./routes/authRouter.js"
 import interceptor from "./middlewares/Interceptor.js";
 import routesBinder from "./routes/RoutesBinder.js";
 import cors from "cors"
@@ -28,7 +27,6 @@ app.use(interceptor);
 
 // route bindings
 routesBinder(app);
-// app.use("/auth", authRouter);
 
 app.get("/", (req, res) => {
     res.send("Hello, World!");
