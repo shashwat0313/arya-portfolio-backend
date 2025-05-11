@@ -80,7 +80,11 @@ async function createBranchInRepo(branchName) {
             ref: "heads/main",
         });
 
+        console.log("mainBranchRef createBranch: " + mainBranchRef);
+        
+
         const latestCommitSha = mainBranchRef.data.object.sha;
+        console.log("Latest commit SHA of main branch:", latestCommitSha);
 
         // Create the new branch
         const newBranchRef = await octokit.rest.git.createRef({
@@ -201,6 +205,9 @@ async function processFileCommit({ filePath, content, commitMessage }) {
             }
         }
 
+        console.log("fileEsists:" + fileExists);
+        
+
         // Determine branch name
         const operation = fileExists ? "UPDATE" : "CREATE";
         const branchName = `${fileName}-${currentDate}-${operation}`;
@@ -263,5 +270,4 @@ export { listFilesInRepo,
             createBranchInRepo, 
             deleteBranchFromRepo, 
             commitFileToBranch, 
-            processFileCommit 
-        };
+            processFileCommit };
