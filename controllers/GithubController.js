@@ -1,6 +1,14 @@
-import { listFilesInRepo, getFileContentUtil, createBranchInRepo, deleteBranchFromRepo, processFileCommit } from "../services/GithubService.js";
+import { 
+    listFilesInRepo, 
+    getFileContentUtil, 
+    createBranchInRepo, 
+    deleteBranchFromRepo, 
+    processFileCommit, 
+    getLatestActionsStatus, 
+    getLatestSuccessfulDeploymentTime 
+} from "../services/GithubService.js";
 
-const getFiles = async (req, res)=>{
+const getFiles = async (req, res)=> {
     const filesList = await listFilesInRepo();
     return res.status(200).json({filesList});
 }
@@ -51,4 +59,32 @@ const commitCreateOrUpdateFile = async (req, res) => {
     }
 };
 
-export { getFiles, getFileContent, createBranch, deleteBranch, commitCreateOrUpdateFile };
+const getActionsStatus = async (req, res) => {
+    try {
+        const status = await getLatestActionsStatus();
+        return res.status(200).json(status);
+    } catch (error) {
+        console.error("Error in getActionsStatus controller:", error.message);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+const getLatestSuccessfulDeployment = async (req, res) => {
+    try {
+        const result = await getLatestSuccessfulDeploymentTime();
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error("Error in getLatestSuccessfulDeployment controller:", error.message);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+export { 
+    getFiles, 
+    getFileContent, 
+    createBranch, 
+    deleteBranch, 
+    commitCreateOrUpdateFile, 
+    getActionsStatus, 
+    getLatestSuccessfulDeployment 
+};
