@@ -18,7 +18,8 @@ app.use(express.json());
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://aryashrestha105.github.io"
+        "https://aryashrestha105.github.io",
+        "http://192.168.1.10:5173"
     ]
 }));
 

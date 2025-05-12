@@ -265,9 +265,67 @@ async function processFileCommit({ filePath, content, commitMessage }) {
     }
 }
 
+async function getLatestActionsStatus() {
+    try {
+        const response = await octokit.rest.actions.listWorkflowRunsForRepo({
+            owner,
+            repo,
+            per_page: 1, // Fetch only the latest workflow run
+        });
+
+        if (response.data.workflow_runs.length === 0) {
+            return { status: "No workflows found" };
+        }
+
+        const latestRun = response.data.workflow_runs[0];
+        return {
+            status: latestRun.status,
+            conclusion: latestRun.conclusion,
+            url: latestRun.html_url,
+        };
+    } catch (error) {
+        console.error("Error fetching GitHub Actions status:", error.message);
+        throw new Error("Failed to fetch GitHub Actions status.");
+    }
+}
+
+async function getLatestSuccessfulDeploymentTime() {
+    try {
+        const response = await octokit.rest.actions.listWorkflowRunsForRepo({
+            owner,
+            repo,
+            per_page: 10, // Fetch the latest 10 workflow runs
+        });
+
+        if (response.data.workflow_runs.length === 0) {
+            return { message: "No workflows found" };
+        }
+
+        // Find the latest successful deployment run
+        const successfulRun = response.data.workflow_runs.find(
+            (run) => run.conclusion === "success"
+        );
+
+        if (!successfulRun) {
+            return { message: "No successful deployments found" };
+        }
+
+        return {
+            message: "Latest successful deployment found",
+            time: successfulRun.updated_at, // ISO timestamp of the successful run
+            url: successfulRun.html_url, // URL to the workflow run
+        };
+    } catch (error) {
+        console.error("Error fetching latest successful deployment time:", error.message);
+        throw new Error("Failed to fetch the latest successful deployment time.");
+    }
+}
+
 export { listFilesInRepo, 
             getFileContentUtil, 
             createBranchInRepo, 
             deleteBranchFromRepo, 
             commitFileToBranch, 
-            processFileCommit };
+            processFileCommit, 
+            getLatestActionsStatus, 
+            getLatestSuccessfulDeploymentTime };
