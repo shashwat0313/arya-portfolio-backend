@@ -225,7 +225,7 @@ async function processFileCommit({ filePath, content, commitMessage }) {
                 repo,
                 base: branch, // Main branch
                 head: branchName, // Feature branch
-                commit_message: `Merge branch '${branchName}' into '${branch}. Automatic merge by Arya's portfolio's backend.'`,
+                commit_message: `Merge branch '${branchName}' into '${branch}'. Automatic merge by Arya's portfolio's backend.`,
             });
 
             return {
